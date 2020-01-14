@@ -1,0 +1,31 @@
+{
+  "name": "ppito/laminas-whoops",
+  "description": "Laminas-Whoops, integrated whoops in Laminas Framework",
+  "type": "module",
+  "license": "MIT",
+  "homepage": "https://github.com/ppito/laminas-whoops",
+  "keywords": [
+    "Laminas",
+    "Whoops",
+    "PHP Error"
+  ],
+  "authors": [
+    {
+      "name": "Mickael TONNELIER",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php": "^7.2",
+    "laminas/laminas-eventmanager": "^3.2",
+    "laminas/laminas-servicemanager": "^3.4",
+    "laminas/laminas-mvc": "^3.1",
+    "laminas/laminas-console": "^2.8",
+    "filp/whoops": "^2.7"
+  },
+  "autoload": {
+    "psr-4": {
+      "WhoopsErrorHandler\\": "src/"
+    }
+  }
+}
