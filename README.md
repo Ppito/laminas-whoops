@@ -24,7 +24,7 @@ powerful stacked error handling system.
 
      ```json
      {
-         "require": {
+         "require-dev": {
              "ppito/laminas-whoops": "^2.0"
          }
      }
