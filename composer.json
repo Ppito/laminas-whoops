@@ -16,11 +16,10 @@
     }
   ],
   "require": {
-    "php": "^7.2",
+    "php": "^7.3 || ^8.0",
     "laminas/laminas-eventmanager": "^3.2",
     "laminas/laminas-servicemanager": "^3.4",
     "laminas/laminas-mvc": "^3.1",
-    "laminas/laminas-console": "^2.8",
     "filp/whoops": "^2.7"
   },
   "autoload": {

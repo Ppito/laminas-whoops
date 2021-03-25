@@ -42,6 +42,9 @@ class PageHandler extends HandlerAbstract implements HandlerInterface {
         $handler = $this->getHandler();
 
         $handler->setApplicationPaths([__FILE__]);
+        $handler->addResourcePath(__DIR__ . '/../../assets/');
+        $handler->addCustomCss('css/laminas-whoops.css');
+
 
         if (!isset($this->options['editor'])) {
             return;
