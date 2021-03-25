@@ -146,7 +146,7 @@ class Module implements ConfigProviderInterface, BootstrapListenerInterface {
                     if ($response->isSuccess()) {
                         $response->setStatusCode(HttpResponse::STATUS_CODE_500);
                     }
-                } elseif ($response instanceof ConsoleResponse) {
+                } elseif (class_exists(ConsoleResponse::class) && $response instanceof ConsoleResponse) {
                     $statusCode = $response->getErrorLevel();
                     if ($statusCode === 0) {
                         $response->setErrorLevel(E_ERROR);
