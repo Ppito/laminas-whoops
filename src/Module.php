@@ -31,6 +31,8 @@ class Module implements ConfigProviderInterface, BootstrapListenerInterface {
     protected $template = 'laminas_whoops/simple_error';
     /** @var Run */
     protected $whoops;
+    /** @var string[] */
+    protected $ignoredExceptions = [];
 
     /**
      * Return default laminas-serializer configuration for laminas-mvc applications.
@@ -89,6 +91,9 @@ class Module implements ConfigProviderInterface, BootstrapListenerInterface {
             }
         }
 
+        if (isset($config['ignored_exceptions'])) {
+            $this->ignoredExceptions = (array)$config['ignored_exceptions'];
+        }
         if (isset($config['template_render'])) {
             $this->setTemplate($config['template_render']);
         }
@@ -131,6 +136,10 @@ class Module implements ConfigProviderInterface, BootstrapListenerInterface {
 
             case Application::ERROR_EXCEPTION:
             default:
+                // Bail out if we're explicitly told to ignore this exception:
+                if (in_array(get_class($e->getParam('exception')), $this->ignoredExceptions)) {
+                    return;
+                }
                 // Set writeToOutput to false for rendered output with laminas-view
                 $this->whoops->writeToOutput(false);
                 $result = $this->whoops->handleException($e->getParam('exception'));

@@ -66,6 +66,17 @@ For example, the module can be loaded only for the admin users or only for dev&p
     'visibility_service_name' => Application\Service\VisibilityService::class,
     ```
 
+### Ignored Exceptions
+
+By default, this module will route all exceptions to Whoops; however, you can create a list of
+exception classes that will be ignored by Whoops.
+
+##### Usage:
+Set the `ignored_exceptions` configuration to an array of class names:
+```php
+'ignored_exceptions' => [My\Exception::class, My\OtherException::class]
+```
+
 
 # License
 
