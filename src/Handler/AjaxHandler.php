@@ -12,7 +12,9 @@
 
 namespace WhoopsErrorHandler\Handler;
 
+use InvalidArgumentException;
 use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerExceptionInterface;
 use Whoops\Handler\JsonResponseHandler as WhoopsAjaxHandler;
 
 class AjaxHandler extends HandlerAbstract implements HandlerInterface {
@@ -21,10 +23,11 @@ class AjaxHandler extends HandlerAbstract implements HandlerInterface {
      * AjaxHandler constructor.
      *
      * @param ContainerInterface $container
-     * @param array              $options
+     * @param array $options
      * @return self
+     * @throws ContainerExceptionInterface Error while retrieving the entry
      */
-    public function __construct(ContainerInterface $container, $options = []) {
+    public function __construct(ContainerInterface $container, array $options = []) {
         parent::__construct($container, $options);
         $this->handler = new WhoopsAjaxHandler();
         $this->configure();
@@ -35,7 +38,7 @@ class AjaxHandler extends HandlerAbstract implements HandlerInterface {
      * Inject an editor into the whoops configuration.
      *
      * @return void
-     * @throws \InvalidArgumentException for an invalid show trace option.
+     * @throws InvalidArgumentException for an invalid show trace option.
      */
     public function configure(): void {
         /** @var WhoopsAjaxHandler $handler */
@@ -49,7 +52,7 @@ class AjaxHandler extends HandlerAbstract implements HandlerInterface {
         $show_trace = $this->options['show_trace']['ajax_display'];
 
         if (! is_bool($show_trace)) {
-            throw new \InvalidArgumentException(sprintf(
+            throw new InvalidArgumentException(sprintf(
                 'Whoops show trace option must be a boolean; received "%s"',
                 (is_object($show_trace) ? get_class($show_trace) : gettype($show_trace))
             ));

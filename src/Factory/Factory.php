@@ -14,6 +14,8 @@
 namespace WhoopsErrorHandler\Factory;
 
 use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use WhoopsErrorHandler\Handler\HandlerInterface;
 
@@ -26,9 +28,10 @@ class Factory implements FactoryInterface
      * @param string $requestedName
      * @param array|null $options
      * @return HandlerInterface
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
-    public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null)
-    {
+    public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null): HandlerInterface {
         $config = $container->has('config') ? $container->get('config') : [];
         $config = $config['whoops'] ?? [];
 

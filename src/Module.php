@@ -13,6 +13,8 @@
 namespace WhoopsErrorHandler;
 
 use Interop\Container\ContainerInterface;
+use Laminas\View\Model\ViewModel;
+use Psr\Container\ContainerExceptionInterface;
 use Whoops\Run;
 use Laminas\Http\Response;
 use Laminas\EventManager\EventInterface;
@@ -21,18 +23,17 @@ use Laminas\ModuleManager\Feature\ConfigProviderInterface;
 use Laminas\Mvc\Application;
 use Laminas\Mvc\MvcEvent;
 use Laminas\ServiceManager\ServiceManager;
-use Laminas\View\Model\ConsoleModel;
 use Laminas\Http\Response as HttpResponse;
 use Laminas\Console\Response as ConsoleResponse;
 
 class Module implements ConfigProviderInterface, BootstrapListenerInterface {
 
     /** @var string */
-    protected $template = 'laminas_whoops/simple_error';
+    protected string $template = 'laminas_whoops/simple_error';
     /** @var Run */
-    protected $whoops;
+    protected ?Run $whoops;
     /** @var string[] */
-    protected $ignoredExceptions = [];
+    protected array $ignoredExceptions = [];
 
     /**
      * Return default laminas-serializer configuration for laminas-mvc applications.
@@ -46,9 +47,9 @@ class Module implements ConfigProviderInterface, BootstrapListenerInterface {
      *
      * @param MvcEvent|EventInterface $e
      * @return void
+     * @throws ContainerExceptionInterface Error while retrieving the entry
      */
-    public function onBootstrap(EventInterface $e) {
-
+    public function onBootstrap(MvcEvent|EventInterface $e): void {
         $application = $e->getApplication();
         /** @var ServiceManager $serviceManager */
         $serviceManager = $application->getServiceManager();
@@ -72,31 +73,24 @@ class Module implements ConfigProviderInterface, BootstrapListenerInterface {
      * Configure Whoops Service
      *
      * @param ContainerInterface $container
+     * @throws ContainerExceptionInterface Error while retrieving the entry
      */
-    protected function configureService(ContainerInterface $container) {
+    protected function configureService(ContainerInterface $container): void {
         $config = $container->has('config') ? $container->get('config') : [];
         $config = $config['whoops'] ?? [];
 
-        $serviceName = array_key_exists('visibility_service_name', $config) && !empty($config['visibility_service_name']) ?
-            $config['visibility_service_name'] :
-            null;
+        $serviceName = $config['visibility_service_name'] ?? null;
         /** @var Service\VisibilityServiceInterface $visibilityService */
         $visibilityService = $serviceName && $container->has($serviceName) ?
             $container->get($serviceName) :
             null;
 
-        if ($visibilityService instanceof Service\VisibilityServiceInterface) {
-            if (!$visibilityService->canAttachEvent()) {
-                return ;
-            }
+        if ($visibilityService instanceof Service\VisibilityServiceInterface && !$visibilityService->canAttachEvent()) {
+            return;
         }
 
-        if (isset($config['ignored_exceptions'])) {
-            $this->ignoredExceptions = (array)$config['ignored_exceptions'];
-        }
-        if (isset($config['template_render'])) {
-            $this->setTemplate($config['template_render']);
-        }
+        $this->ignoredExceptions = (array) ($config['ignored_exceptions'] ?? []);
+        $this->setTemplate($config['template_render'] ?? $this->template);
 
         /** @var Service\WhoopsService $service */
         $service = $container->has(Service\WhoopsService::class) ?
@@ -113,17 +107,14 @@ class Module implements ConfigProviderInterface, BootstrapListenerInterface {
      *
      * @param MvcEvent $e
      */
-    public function prepareException(MvcEvent $e) {
-
+    public function prepareException(MvcEvent $e): void {
         // Do nothing if no error in the event
-        $error = $e->getError();
-        if (empty($error)) {
+        if (empty($error = $e->getError())) {
             return;
         }
 
         // Do nothing if the result is a response object
-        $result = $e->getResult();
-        if ($result instanceof Response) {
+        if ($e->getResult() instanceof Response) {
             return;
         }
 
@@ -143,9 +134,7 @@ class Module implements ConfigProviderInterface, BootstrapListenerInterface {
                 // Set writeToOutput to false for rendered output with laminas-view
                 $this->whoops->writeToOutput(false);
                 $result = $this->whoops->handleException($e->getParam('exception'));
-                $model  = new ConsoleModel([
-                    'result' => $result,
-                ]);
+                $model  = new ViewModel(['result' => $result]);
 
                 $model->setTemplate($this->getTemplate());
                 $e->setResult($model);
@@ -181,7 +170,7 @@ class Module implements ConfigProviderInterface, BootstrapListenerInterface {
      * @param string $template
      * @return self
      */
-    public function setTemplate($template) {
+    public function setTemplate(string $template): static {
         $this->template = $template;
         return $this;
     }
@@ -191,7 +180,7 @@ class Module implements ConfigProviderInterface, BootstrapListenerInterface {
      *
      * @return string
      */
-    public function getTemplate() {
+    public function getTemplate(): string {
         return $this->template;
     }
 }

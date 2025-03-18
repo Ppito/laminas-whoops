@@ -19,5 +19,5 @@ interface HandlerInterface {
      *
      * @return void
      */
-    public function configure();
+    public function configure(): void;
 }

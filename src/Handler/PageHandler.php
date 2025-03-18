@@ -13,6 +13,8 @@
 namespace WhoopsErrorHandler\Handler;
 
 use Interop\Container\ContainerInterface;
+use InvalidArgumentException;
+use Psr\Container\ContainerExceptionInterface;
 use Whoops\Handler\PrettyPageHandler as WhoopsPageHandler;
 
 class PageHandler extends HandlerAbstract implements HandlerInterface {
@@ -21,10 +23,11 @@ class PageHandler extends HandlerAbstract implements HandlerInterface {
      * PageHandler constructor.
      *
      * @param ContainerInterface $container
-     * @param array              $options
+     * @param array $options
      * @return self
+     * @throws ContainerExceptionInterface Error while retrieving the entry
      */
-    public function __construct(ContainerInterface $container, $options = []) {
+    public function __construct(ContainerInterface $container, array $options = []) {
         parent::__construct($container, $options);
         $this->handler = new WhoopsPageHandler();
         $this->configure();
@@ -35,7 +38,8 @@ class PageHandler extends HandlerAbstract implements HandlerInterface {
      * Inject an editor into the whoops configuration.
      *
      * @return void
-     * @throws \InvalidArgumentException for an invalid editor definition.
+     * @throws InvalidArgumentException for an invalid editor definition.
+     * @throws ContainerExceptionInterface Error while retrieving the entry
      */
     public function configure(): void {
         /** @var WhoopsPageHandler $handler */
@@ -52,7 +56,7 @@ class PageHandler extends HandlerAbstract implements HandlerInterface {
 
         $editor = $this->options['editor'];
         if (!is_callable($editor) && !is_string($editor)) {
-            throw new \InvalidArgumentException(sprintf(
+            throw new InvalidArgumentException(sprintf(
                 'Whoops editor must be a string editor name, string service name, or callable; received "%s"',
                 (is_object($editor) ? get_class($editor) : gettype($editor))
             ));
