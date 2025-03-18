@@ -75,7 +75,7 @@ class Module implements ConfigProviderInterface, BootstrapListenerInterface {
      */
     protected function configureService(ContainerInterface $container) {
         $config = $container->has('config') ? $container->get('config') : [];
-        $config = isset($config['whoops']) ? $config['whoops'] : [];
+        $config = $config['whoops'] ?? [];
 
         $serviceName = array_key_exists('visibility_service_name', $config) && !empty($config['visibility_service_name']) ?
             $config['visibility_service_name'] :
