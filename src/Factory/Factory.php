@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: Ppito
@@ -13,20 +14,21 @@
 namespace WhoopsErrorHandler\Factory;
 
 use Interop\Container\ContainerInterface;
-use WhoopsErrorHandler\Handler\HandlerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
+use WhoopsErrorHandler\Handler\HandlerInterface;
 
-class Factory implements FactoryInterface  {
-
+class Factory implements FactoryInterface
+{
     /**
      * Invoke Handler
      *
      * @param ContainerInterface $container
-     * @param string             $requestedName
-     * @param array|null         $options
+     * @param string $requestedName
+     * @param array|null $options
      * @return HandlerInterface
      */
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null) {
+    public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null)
+    {
         $config = $container->has('config') ? $container->get('config') : [];
         $config = $config['whoops'] ?? [];
 
