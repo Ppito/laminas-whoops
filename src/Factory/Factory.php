@@ -18,6 +18,7 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use WhoopsErrorHandler\Handler\HandlerInterface;
+use WhoopsErrorHandler\Service\WhoopsService;
 
 class Factory implements FactoryInterface
 {
@@ -27,11 +28,11 @@ class Factory implements FactoryInterface
      * @param ContainerInterface $container
      * @param string $requestedName
      * @param array|null $options
-     * @return HandlerInterface
+     * @return HandlerInterface|WhoopsService
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null): HandlerInterface {
+    public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null): HandlerInterface|WhoopsService {
         $config = $container->has('config') ? $container->get('config') : [];
         $config = $config['whoops'] ?? [];
 
