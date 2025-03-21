@@ -18,12 +18,12 @@ use Whoops\Handler\HandlerInterface as WhoopsHandlerInterface;
 abstract class HandlerAbstract extends ServiceAbstract implements HandlerInterface {
 
     /** @var WhoopsHandlerInterface */
-    protected $handler;
+    protected WhoopsHandlerInterface $handler;
 
     /**
      * @return WhoopsHandlerInterface
      */
-    public function getHandler() {
+    public function getHandler(): WhoopsHandlerInterface {
         return $this->handler;
     }
 }

@@ -12,6 +12,8 @@
 
 namespace WhoopsErrorHandler\Service;
 
+use InvalidArgumentException;
+use Psr\Container\ContainerExceptionInterface;
 use WhoopsErrorHandler\Handler;
 use Interop\Container\ContainerInterface;
 use Whoops\Util\Misc;
@@ -22,16 +24,17 @@ use Whoops\Handler\Handler as WhoopsHandler;
 class WhoopsService extends ServiceAbstract {
 
     /** @var RunInterface|null */
-    protected $service = null;
+    protected ?RunInterface $service = null;
 
     /**
      * WhoopsService constructor.
      *
      * @param ContainerInterface $container
-     * @param array              $options
+     * @param array $options
      * @return self
+     * @throws ContainerExceptionInterface Error while retrieving the entry
      */
-    public function __construct(ContainerInterface $container, $options = []) {
+    public function __construct(ContainerInterface $container, array $options = []) {
         parent::__construct($container, $options);
         $this->service = new Whoops();
         $this->configure();
@@ -42,6 +45,7 @@ class WhoopsService extends ServiceAbstract {
      * Configure Whoops service
      *
      * @return void
+     * @throws ContainerExceptionInterface Error while retrieving the entry
      */
     public function configure(): void {
         /**
@@ -63,9 +67,10 @@ class WhoopsService extends ServiceAbstract {
      *
      * @param ContainerInterface $container
      * @return Whoops|null
-     * @throws \InvalidArgumentException if not an instance of WhoopsHandler
+     * @throws InvalidArgumentException if not an instance of WhoopsHandler
+     * @throws ContainerExceptionInterface Error while retrieving the entry
      */
-    private function registerHandler(ContainerInterface $container) {
+    private function registerHandler(ContainerInterface $container): ?Whoops {
         if (Misc::isAjaxRequest()) {
             $service = $container->has(Handler\AjaxHandler::class) ?
                 $container->get(Handler\AjaxHandler::class) :
@@ -89,7 +94,7 @@ class WhoopsService extends ServiceAbstract {
 
         $handler = $service->getHandler();
         if (!$handler instanceof WhoopsHandler) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 sprintf(
                     'The register handler must be an instance of \Whoops\Handler\Handler; received "%s"',
                     (is_object($handler) ? get_class($handler) : gettype($handler))
@@ -101,9 +106,9 @@ class WhoopsService extends ServiceAbstract {
     }
 
     /**
-     * @return RunInterface
+     * @return RunInterface|null
      */
-    public function getService() {
+    public function getService(): ?RunInterface {
         return $this->service;
     }
 }

@@ -14,24 +14,26 @@ namespace WhoopsErrorHandler\Service;
 
 use Interop\Container\ContainerInterface;
 use Laminas\EventManager\EventManager;
+use Psr\Container\ContainerExceptionInterface;
 
 abstract class ServiceAbstract {
 
     /** @var array|null */
-    protected $options = [];
+    protected ?array $options = [];
     /** @var ContainerInterface */
-    protected $container;
+    protected ContainerInterface $container;
     /** @var EventManager|null  */
-    protected $eventManager = null;
+    protected mixed $eventManager = null;
 
     /**
      * HandlerAbstract constructor.
      *
      * @param ContainerInterface $container
-     * @param array              $options
+     * @param array $options
      * @return self
+     * @throws ContainerExceptionInterface Error while retrieving the entry
      */
-    public function __construct(ContainerInterface $container, $options = []) {
+    public function __construct(ContainerInterface $container, array $options = []) {
         $this->options      = $options;
         $this->container    = $container;
         $this->eventManager = $container->has('EventManager') ?
@@ -50,14 +52,14 @@ abstract class ServiceAbstract {
     /**
      * @return array|null
      */
-    public function getOptions() {
+    public function getOptions(): ?array {
         return $this->options;
     }
 
     /**
-     * @return ContainerInterface
+     * @return ContainerInterface Error while retrieving the entry
      */
-    public function getContainer() {
+    public function getContainer(): ContainerInterface {
         return $this->container;
     }
 }

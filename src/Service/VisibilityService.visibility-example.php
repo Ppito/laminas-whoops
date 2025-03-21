@@ -12,6 +12,7 @@
 
 namespace Application\Service;
 
+use Psr\Container\ContainerExceptionInterface;
 use WhoopsErrorHandler\Service\VisibilityServiceAbstract;
 use WhoopsErrorHandler\Service\VisibilityServiceInterface;
 
@@ -27,6 +28,7 @@ class VisibilityService extends VisibilityServiceAbstract implements VisibilityS
      * - Get Connected User
      *
      * @return void
+     * @throws ContainerExceptionInterface Error while retrieving the entry
      */
     public function configure(): void {
         $container = $this->getContainer();

@@ -12,8 +12,7 @@
 
 namespace WhoopsErrorHandler\Service;
 
-abstract class VisibilityServiceAbstract extends ServiceAbstract
-    implements VisibilityServiceInterface {
+abstract class VisibilityServiceAbstract extends ServiceAbstract implements VisibilityServiceInterface {
 
     /**
      * Verify if the module can be loaded
