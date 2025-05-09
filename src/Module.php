@@ -30,8 +30,8 @@ class Module implements ConfigProviderInterface, BootstrapListenerInterface {
 
     /** @var string */
     protected string $template = 'laminas_whoops/simple_error';
-    /** @var Run */
-    protected ?Run $whoops;
+    /** @var Run|null */
+    protected ?Run $whoops = null;
     /** @var string[] */
     protected array $ignoredExceptions = [];
 
